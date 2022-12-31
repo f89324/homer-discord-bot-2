@@ -1,0 +1,8 @@
+# idea
+/.idea/*.*
+/.idea/libraries/
+/.idea/dictionaries/*
+*.iml
+
+target/
+target/*
