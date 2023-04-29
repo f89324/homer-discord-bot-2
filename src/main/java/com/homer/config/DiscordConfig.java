@@ -33,7 +33,9 @@ public class DiscordConfig {
                    @NotNull MessageListener messageListener,
                    @NotNull CommandListener commandListener) {
         JDA bot = JDABuilder.createDefault(discordToken)
-                .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
+                .disableCache(CacheFlag.MEMBER_OVERRIDES)
+                // Enable the VOICE_STATE cache to find a user's connected voice channel
+                .enableCache(CacheFlag.VOICE_STATE)
                 .setBulkDeleteSplittingEnabled(false)
                 .enableIntents(
                         EnumSet.of(
@@ -61,7 +63,13 @@ public class DiscordConfig {
     @NotNull
     private static List<SlashCommandData> createCommands() {
         return Arrays.stream(BotCommand.values())
-                .map(c -> Commands.slash(c.getName(), c.getDescription()))
+                .map(c -> {
+                    SlashCommandData command = Commands.slash(c.getName(), c.getDescription());
+                    if (c.hasOptions()) {
+                        command.addOptions(c.getOptions());
+                    }
+                    return command;
+                })
                 .collect(Collectors.toList());
     }
 }

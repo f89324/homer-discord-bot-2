@@ -1,4 +1,9 @@
 {
   "properties": [
+    {
+      "name": "homer.discord.token",
+      "type": "java.lang.String",
+      "description": "Description for homer.discord.token."
+    }
   ]
 }
