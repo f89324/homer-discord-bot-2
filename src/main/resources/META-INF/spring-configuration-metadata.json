@@ -4,6 +4,11 @@
       "name": "homer.discord.token",
       "type": "java.lang.String",
       "description": "Description for homer.discord.token."
+    },
+    {
+      "name": "homer.intro",
+      "type": "java.util.List<com.homer.config.IntroProperties.MemberIntroInfo>",
+      "description": "Description for homer.intro"
     }
   ]
 }

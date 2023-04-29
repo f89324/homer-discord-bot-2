@@ -1,2 +1,7 @@
 homer:
   discord.token: "<TOKEN>"
+  intro:
+    - username: "<USERNAME>"
+      file: "<FILE.mp3>"
+    - username: "<USERNAME>"
+      file: "<FILE.mp3>"

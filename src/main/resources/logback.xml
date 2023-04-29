@@ -16,6 +16,10 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="com.sedmelluq.discord.lavaplayer" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>

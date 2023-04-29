@@ -4,7 +4,12 @@ import com.homer.exception.HomerException;
 import com.homer.listener.CommandListener;
 import com.homer.listener.MessageListener;
 import com.homer.listener.ReadyListener;
+import com.homer.listener.VoiceListener;
 import com.homer.util.BotCommand;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -31,6 +36,7 @@ public class DiscordConfig {
     @Bean(name = "bot")
     public JDA bot(@NotNull ReadyListener readyListener,
                    @NotNull MessageListener messageListener,
+                   @NotNull VoiceListener voiceListener,
                    @NotNull CommandListener commandListener) {
         JDA bot = JDABuilder.createDefault(discordToken)
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
@@ -44,7 +50,7 @@ public class DiscordConfig {
                                 // We need voice states to connect to the voice channel
                                 GatewayIntent.GUILD_VOICE_STATES))
                 .setStatus(OnlineStatus.ONLINE)
-                .addEventListeners(readyListener, messageListener, commandListener)
+                .addEventListeners(readyListener, messageListener, voiceListener, commandListener)
                 .build();
 
         // Sets the global command list to the provided commands (removing all others)
@@ -58,6 +64,14 @@ public class DiscordConfig {
         } catch (InterruptedException e) {
             throw new HomerException("Error while connecting bot to discord", e);
         }
+    }
+
+    @Bean(name = "audioPlayer")
+    public AudioPlayer audioPlayer() {
+        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(playerManager);
+
+        return playerManager.createPlayer();
     }
 
     @NotNull
