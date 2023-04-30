@@ -7,8 +7,13 @@
     },
     {
       "name": "homer.intro",
-      "type": "java.util.List<com.homer.config.IntroProperties.MemberIntroInfo>",
+      "type": "java.util.List<com.homer.config.HomerProperties.MemberIntro>",
       "description": "Description for homer.intro"
+    },
+    {
+      "name": "homer.reactions",
+      "type": "java.util.List<com.homer.config.HomerProperties.Reaction>",
+      "description": "Description for homer.reactions"
     }
   ]
 }

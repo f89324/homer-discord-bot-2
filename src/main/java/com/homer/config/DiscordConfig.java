@@ -13,7 +13,11 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -22,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +37,8 @@ public class DiscordConfig {
     private String discordToken;
 
     @Bean(name = "bot")
-    public JDA bot(@NotNull ReadyListener readyListener,
+    public JDA bot(@NotNull HomerProperties homerProperties,
+                   @NotNull ReadyListener readyListener,
                    @NotNull MessageListener messageListener,
                    @NotNull VoiceListener voiceListener,
                    @NotNull CommandListener commandListener) {
@@ -45,9 +49,9 @@ public class DiscordConfig {
                 .setBulkDeleteSplittingEnabled(false)
                 .enableIntents(
                         EnumSet.of(
-                                // We need messages in guilds to accept commands from users
+                                // Needed for accept commands from users
                                 GatewayIntent.GUILD_MESSAGES,
-                                // We need voice states to connect to the voice channel
+                                // Needed for connect to the voice channel
                                 GatewayIntent.GUILD_VOICE_STATES))
                 .setStatus(OnlineStatus.ONLINE)
                 .addEventListeners(readyListener, messageListener, voiceListener, commandListener)
@@ -55,7 +59,7 @@ public class DiscordConfig {
 
         // Sets the global command list to the provided commands (removing all others)
         bot.updateCommands()
-                .addCommands(createCommands())
+                .addCommands(createCommands(homerProperties.getReactions()))
                 .queue();
 
         try {
@@ -75,15 +79,34 @@ public class DiscordConfig {
     }
 
     @NotNull
-    private static List<SlashCommandData> createCommands() {
-        return Arrays.stream(BotCommand.values())
-                .map(c -> {
-                    SlashCommandData command = Commands.slash(c.getName(), c.getDescription());
-                    if (c.hasOptions()) {
-                        command.addOptions(c.getOptions());
-                    }
-                    return command;
-                })
+    private List<SlashCommandData> createCommands(List<HomerProperties.Reaction> reactions) {
+        return List.of(createSlashCommand(BotCommand.JOIN)
+                        .addOptions(
+                                List.of(
+                                        new OptionData(
+                                                OptionType.CHANNEL, "channel", "Channel to join")
+                                                .setChannelTypes(ChannelType.VOICE))),
+                createSlashCommand(BotCommand.LEAVE),
+                createSlashCommand(BotCommand.REACT)
+                        .addOptions(
+                                List.of(
+                                        new OptionData(
+                                                OptionType.STRING, "reaction", "Reaction to play", true)
+                                                .addChoices(createChoicesForReaction(reactions))))
+        );
+    }
+
+    @NotNull
+    private SlashCommandData createSlashCommand(@NotNull BotCommand command) {
+        return Commands.slash(command.getName(), command.getDescription());
+    }
+
+    @NotNull
+    private List<Command.Choice> createChoicesForReaction(@NotNull List<HomerProperties.Reaction> reactions) {
+        return reactions.stream()
+                .map(r -> new Command.Choice(
+                        "[" + r.getEmoji() + "] " + r.getName(),
+                        r.getName()))
                 .collect(Collectors.toList());
     }
 }

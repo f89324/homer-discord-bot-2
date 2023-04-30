@@ -1,31 +1,39 @@
 package com.homer.listener;
 
-import com.homer.config.IntroProperties;
+import com.homer.config.HomerProperties;
 import com.homer.service.AudioPlayerSendHandler;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.io.NonSeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@AllArgsConstructor
 public class VoiceListener extends ListenerAdapter {
 
-    private AudioPlayer player;
-    private IntroProperties introProperties;
+    private final AudioPlayer player;
+    private final HomerProperties homerProperties;
+    private final Map<String, String> intros;
+
+    @Autowired
+    public VoiceListener(AudioPlayer player, HomerProperties homerProperties) {
+        this.player = player;
+        this.homerProperties = homerProperties;
+        this.intros = getIntroAsMap();
+    }
 
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
@@ -83,8 +91,6 @@ public class VoiceListener extends ListenerAdapter {
     }
 
     private void playIntroForMember(@NotNull GuildVoiceUpdateEvent event) {
-        Map<String, String> intros = introProperties.getAsMap();
-
         String userName = event.getMember().getUser().getName();
         if (intros.containsKey(userName)) {
             String introFilename = intros.get(userName);
@@ -106,5 +112,12 @@ public class VoiceListener extends ListenerAdapter {
                 event.getMember().getNickname(),
                 event.getChannelJoined() != null ? event.getChannelJoined().getName() : "-",
                 event.getChannelLeft() != null ? event.getChannelLeft().getName() : "-");
+    }
+
+    private Map<String, String> getIntroAsMap() {
+        return homerProperties.getIntro().stream()
+                .collect(Collectors.toMap(
+                        HomerProperties.MemberIntro::getUsername,
+                        HomerProperties.MemberIntro::getFile));
     }
 }

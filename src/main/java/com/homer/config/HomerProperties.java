@@ -6,27 +6,28 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Getter
 @Component
 @AllArgsConstructor
 @ConfigurationProperties(prefix = "homer")
-public class IntroProperties {
-    private List<MemberIntroInfo> intro;
+public class HomerProperties {
+    private List<MemberIntro> intro;
+    private List<Reaction> reactions;
 
     @Getter
     @AllArgsConstructor
-    public static class MemberIntroInfo {
+    public static class MemberIntro {
         private String username;
         private String file;
     }
 
-    public Map<String, String> getAsMap() {
-        return intro.stream()
-                .collect(Collectors.toMap(
-                        IntroProperties.MemberIntroInfo::getUsername,
-                        IntroProperties.MemberIntroInfo::getFile));
+    @Getter
+    @AllArgsConstructor
+    public static class Reaction {
+        private String name;
+        private String file;
+        private String emoji;
+        private String description;
     }
 }

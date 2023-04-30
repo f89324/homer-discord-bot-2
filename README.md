@@ -21,3 +21,11 @@ java -Dspring.config.location=homer-config.yml -jar untitled-0.0.1.jar
 #### Basic commands
 * `join` - Joins a voice channel.
 * `leave` - Leaves a voice channel.
+* `react` - Broadcasts a reaction to the voice channel.
+
+#### Permissions bot need to work
+* `VIEW_CHANNEL` - To read text channels & see voice channels.
+* `READ_MESSAGE_HISTORY` - To read command messages.
+* `SEND_MESSAGES` - To answer your commands and send notification messages.
+* `CONNECT` - To join to a voice channel.
+* `SPEAK` - To play audio in a voice channel.
