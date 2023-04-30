@@ -19,7 +19,14 @@ public enum BotCommand {
                     new OptionData(
                             OptionType.CHANNEL, "channel", "Channel to join")
                             .setChannelTypes(ChannelType.VOICE))),
-    LEAVE("leave", "Leave a voice channel.", null);
+    LEAVE("leave", "Leave a voice channel.", null),
+    STOP("stop", "Stops playing to voice.", null),
+    REACT("react", "-------------", null), // TODO
+    PLAY("play", "Plays audio from a url", null),
+    PAUSE("pause", "Pauses the audio playing.", null),
+    RESUME("resume", "Resumes the audio playing.", null),
+    NOW_PLAYING("now_playing", "Display information about the currently playing song.", null),
+    VOLUME("volume", "Changes the bot's volume.", null);
 
     /**
      * Slash command name.
