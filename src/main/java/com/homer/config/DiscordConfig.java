@@ -92,7 +92,8 @@ public class DiscordConfig {
                                 List.of(
                                         new OptionData(
                                                 OptionType.STRING, "reaction", "Reaction to play", true)
-                                                .addChoices(createChoicesForReaction(reactions))))
+                                                .addChoices(createChoicesForReaction(reactions)))),
+                createSlashCommand(BotCommand.ABOUT)
         );
     }
 

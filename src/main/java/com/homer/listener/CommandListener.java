@@ -19,12 +19,15 @@ import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -63,6 +66,9 @@ public class CommandListener extends ListenerAdapter {
                     break;
                 case REACT:
                     react(event);
+                    break;
+                case ABOUT:
+                    about(event);
                     break;
             }
         } catch (Exception e) {
@@ -133,6 +139,21 @@ public class CommandListener extends ListenerAdapter {
             log.info("bot did not react cause it is not in the audio channel");
             event.getHook().editOriginal("```Nope. The bot reacts only when it is in the audio channel.```").queue();
         }
+    }
+
+    private void about(@NotNull SlashCommandInteractionEvent event) {
+        String reactionsHint = "Available reactions: \n"
+                + homerProperties.getReactions().stream()
+                .map(reaction -> "[" + reaction.getEmoji() + "] "
+                        + reaction.getName() + " - " + reaction.getDescription())
+                .collect(Collectors.joining("\n"));
+
+        event.getHook().editOriginal("```" + reactionsHint + "```")
+                .setActionRow(
+                        List.of(
+                                Button.link("https://github.com/f89324/homer-discord-bot-2", "GitHub"),
+                                Button.link("https://youtu.be/dQw4w9WgXcQ", "Full Guide")))
+                .queue();
     }
 
     private void logEvent(@NotNull SlashCommandInteractionEvent event) {
