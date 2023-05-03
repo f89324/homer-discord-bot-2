@@ -44,7 +44,6 @@ public class VoiceListener extends ListenerAdapter {
             return;
         }
 
-
         GuildVoiceState botVoiceState = event.getGuild().getSelfMember().getVoiceState();
         boolean botAlreadyInVoiceChannel = botVoiceState != null && botVoiceState.getChannel() != null;
         if (botAlreadyInVoiceChannel) {
@@ -103,6 +102,8 @@ public class VoiceListener extends ListenerAdapter {
 
             player.stopTrack();
             player.playTrack(track);
+        } else {
+            log.info("there is no intro for member [{}]", userName);
         }
     }
 
@@ -115,6 +116,7 @@ public class VoiceListener extends ListenerAdapter {
                 event.getChannelLeft() != null ? event.getChannelLeft().getName() : "-");
     }
 
+    @NotNull
     private Map<String, String> getIntroAsMap() {
         return homerProperties.getIntro().stream()
                 .collect(Collectors.toMap(

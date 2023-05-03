@@ -31,7 +31,7 @@ import java.io.InputStream;
 @AllArgsConstructor
 public class CommandListener extends ListenerAdapter {
 
-    private AudioPlayer player;
+    private final AudioPlayer player;
     private final HomerProperties homerProperties;
 
     @Override
@@ -46,6 +46,7 @@ public class CommandListener extends ListenerAdapter {
         }
 
         if (isDM(event)) {
+            //noinspection ConstantConditions
             event.getChannel().asPrivateChannel().getUser().openPrivateChannel().queue(
                     channel -> channel.sendMessage("```Nope. The bot works only in the guild.```").queue());
             return;
@@ -72,12 +73,9 @@ public class CommandListener extends ListenerAdapter {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
+    // event.getInteraction().getGuild() & event.getInteraction().getMember() is null if the interaction is not from a guild. This cannot be because there is "isDM" check.
     private void join(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getInteraction().getMember() == null || event.getInteraction().getGuild() == null) {
-            // This is null if the interaction is not from a guild. Unreachable code because there is "isDM" check.
-            return;
-        }
-
         AudioChannel channel;
         GuildChannelUnion channelFromOption = event.getOption("channel", OptionMapping::getAsChannel);
         if (channelFromOption != null) {
@@ -103,11 +101,7 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private void leave(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getInteraction().getGuild() == null) {
-            // This is null if the interaction is not from a guild. Unreachable code because there is "isDM" check.
-            return;
-        }
-
+        @SuppressWarnings("ConstantConditions") // event.getInteraction().getGuild() is null if the interaction is not from a guild. This cannot be because there is "isDM" check.
         AudioManager manager = event.getInteraction().getGuild().getAudioManager();
         manager.closeAudioConnection();
 
