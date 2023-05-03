@@ -8,7 +8,9 @@ Exclusive bot for Donut Hole server.
 #### Running the bot
 ```
 chcp 65001
-java -Dspring.config.location=homer-config.yml -jar untitled-0.0.1.jar
+java ^
+-Dspring.config.location=homer-config.yml ^
+-jar untitled-0.0.1.jar
 ```
 
 ### Usage

@@ -10,3 +10,5 @@ homer:
       file: "<FILE.mp3>"
       emoji: "<EMOJI>"
       description: "<DESCRIPTION>"
+
+logging.config: "<logback.xml>"

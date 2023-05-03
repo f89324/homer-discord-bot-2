@@ -4,6 +4,7 @@ import com.homer.config.HomerProperties;
 import com.homer.exception.HomerException;
 import com.homer.service.AudioPlayerSendHandler;
 import com.homer.util.BotCommand;
+import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.io.NonSeekableInputStream;
@@ -127,7 +128,7 @@ public class CommandListener extends ListenerAdapter {
             // Edit the thinking message with our response on success
             event.getHook().editOriginal("```I reacted with [" + reaction.getName() + "]```").queue();
 
-            InputStream audioStream = AudioPlayerSendHandler.class.getClassLoader().getResourceAsStream("reactions/" + reaction.getFile());
+            InputStream audioStream = HomerUtil.getFile(reaction.getFile());
             AudioTrackInfo trackInfo = new AudioTrackInfo("REACTION " + reaction.getName(), "", 0, "", false, "");
             AudioTrack track = new Mp3AudioTrack(trackInfo, new NonSeekableInputStream(audioStream));
 

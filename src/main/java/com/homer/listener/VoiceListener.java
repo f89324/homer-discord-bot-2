@@ -2,6 +2,7 @@ package com.homer.listener;
 
 import com.homer.config.HomerProperties;
 import com.homer.service.AudioPlayerSendHandler;
+import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.io.NonSeekableInputStream;
@@ -96,7 +97,7 @@ public class VoiceListener extends ListenerAdapter {
             String introFilename = intros.get(userName);
             log.info("playing intro [{}] for member [{}]", introFilename, userName);
 
-            InputStream audioStream = AudioPlayerSendHandler.class.getClassLoader().getResourceAsStream("intro/" + introFilename);
+            InputStream audioStream = HomerUtil.getFile(introFilename);
             AudioTrackInfo trackInfo = new AudioTrackInfo(introFilename, "", 0, "", false, "");
             AudioTrack track = new Mp3AudioTrack(trackInfo, new NonSeekableInputStream(audioStream));
 
