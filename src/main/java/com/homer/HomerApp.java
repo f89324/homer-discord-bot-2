@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
+@EnableFeignClients
 @SpringBootApplication
 public class HomerApp {
 

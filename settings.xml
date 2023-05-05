@@ -18,6 +18,17 @@
                     <name>m2-dv8tion</name>
                     <url>https://m2.dv8tion.net/releases</url>
                 </repository>
+
+                <repository>
+                    <id>snapshots-repo</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
             </repositories>
         </profile>
     </profiles>
