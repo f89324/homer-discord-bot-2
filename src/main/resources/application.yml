@@ -1,3 +1,5 @@
+spring.main.register-shutdown-hook: false
+
 homer:
   discord.token: "<TOKEN>"
   intro:
