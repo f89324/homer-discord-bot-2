@@ -6,8 +6,12 @@ import com.homer.service.AudioPlayerSendHandler;
 import com.homer.util.BotCommand;
 import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.io.NonSeekableInputStream;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lombok.AllArgsConstructor;
@@ -36,6 +40,7 @@ public class CommandListener extends ListenerAdapter {
 
     private final AudioPlayer player;
     private final HomerProperties homerProperties;
+    private final AudioPlayerManager audioPlayerManager;
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -69,6 +74,12 @@ public class CommandListener extends ListenerAdapter {
                     break;
                 case ABOUT:
                     about(event);
+                    break;
+                case PLAY:
+                    play(event);
+                    break;
+                case STOP:
+                    stop(event);
                     break;
             }
         } catch (Exception e) {
@@ -154,6 +165,67 @@ public class CommandListener extends ListenerAdapter {
                                 Button.link("https://github.com/f89324/homer-discord-bot-2", "GitHub"),
                                 Button.link("https://youtu.be/dQw4w9WgXcQ", "Full Guide")))
                 .queue();
+    }
+
+    private void play(@NotNull SlashCommandInteractionEvent event) {
+        @SuppressWarnings("ConstantConditions") // "url" option cannot be absent
+        String url = event.getOption("url").getAsString();
+        audioPlayerManager.loadItem(url, createHandler(event, url));
+    }
+
+    private void stop(@NotNull SlashCommandInteractionEvent event) {
+        log.info("[{}] stopped playing", event.getUser().getName());
+
+        if (player.getPlayingTrack() != null) {
+            player.stopTrack();
+            event.getHook().editOriginal("```[" + event.getUser().getName() + "] stopped playing```")
+                    .queue();
+        } else {
+            event.getHook().editOriginal("```There's nothing to stop.```")
+                    .queue();
+        }
+    }
+
+    @NotNull
+    private AudioLoadResultHandler createHandler(@NotNull SlashCommandInteractionEvent event, String url) {
+        return new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                player.stopTrack();
+                player.playTrack(track);
+                log.info("Play track [{}]", track.getInfo().title);
+
+                event.getHook().editOriginal("```Play track [" + track.getInfo().title + " — " + track.getInfo().author + "]```")
+                        .queue();
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                event.getHook().editOriginal("```Play playlist [" + playlist.getName() + "]```")
+                        .queue();
+
+                player.stopTrack();
+
+                for (AudioTrack track : playlist.getTracks()) {
+                    log.info("Play track [{}]", track);
+                    player.playTrack(track);
+                }
+            }
+
+            @Override
+            public void noMatches() {
+                log.warn("Track [{}] not found!", url);
+                event.getHook().editOriginal("```Track [" + url + "] not found!```")
+                        .queue();
+            }
+
+            @Override
+            public void loadFailed(FriendlyException throwable) {
+                log.warn("Something went wrong when trying to load track: [{}]", throwable.getMessage());
+                event.getHook().editOriginal("```Something went wrong when trying to load track: [" + throwable.getMessage() + "]```")
+                        .queue();
+            }
+        };
     }
 
     private void logEvent(@NotNull SlashCommandInteractionEvent event) {

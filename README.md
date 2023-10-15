@@ -24,6 +24,8 @@ java ^
 * `join` - Joins a voice channel.
 * `leave` - Leaves a voice channel.
 * `react` - Broadcasts a reaction to the voice channel.
+* `play` - Broadcasts a track to the voice channel.
+* `stop` - Stops broadcasting a track to the voice channel.
 
 #### Permissions bot need to work
 * `VIEW_CHANNEL` - To read text channels & see voice channels.

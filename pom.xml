@@ -41,7 +41,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.13</version>
+            <version>5.0.0-beta.15</version>
         </dependency>
         <dependency>
             <!-- LavaPlayer is an audio player library written in Java which can load audio tracks from various sources and convert them into a stream of Opus frames. -->
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>1.18.30</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>

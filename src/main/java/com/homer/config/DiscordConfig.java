@@ -10,6 +10,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -21,6 +26,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -70,17 +77,34 @@ public class DiscordConfig {
         }
     }
 
-    @Bean(name = "audioPlayer")
-    public AudioPlayer audioPlayer() {
+    @Bean(name = "audioPlayerManager")
+    public AudioPlayerManager audioPlayerManager() {
         AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+
+        YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager();
+        youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config)
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
+                .build());
+        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+
         AudioSourceManagers.registerRemoteSources(playerManager);
 
-        return playerManager.createPlayer();
+        return playerManager;
+    }
+
+    @Bean(name = "audioPlayer")
+    public AudioPlayer audioPlayer(AudioPlayerManager audioPlayerManager) {
+        return audioPlayerManager.createPlayer();
     }
 
     @NotNull
     private List<SlashCommandData> createCommands(List<HomerProperties.Reaction> reactions) {
-        return List.of(createSlashCommand(BotCommand.JOIN)
+        return List.of(
+                createSlashCommand(BotCommand.JOIN)
                         .addOptions(
                                 List.of(
                                         new OptionData(
@@ -93,6 +117,12 @@ public class DiscordConfig {
                                         new OptionData(
                                                 OptionType.STRING, "reaction", "Reaction to play", true)
                                                 .addChoices(createChoicesForReaction(reactions)))),
+                createSlashCommand(BotCommand.PLAY)
+                        .addOptions(
+                                List.of(
+                                        new OptionData(
+                                                OptionType.STRING, "url", "URL to track location", true))),
+                createSlashCommand(BotCommand.STOP),
                 createSlashCommand(BotCommand.ABOUT)
         );
     }

@@ -12,7 +12,9 @@ public enum BotCommand {
     JOIN("join", "Join the voice channel you're in."),
     LEAVE("leave", "Leave a voice channel."),
     ABOUT("about", "Show information about the bot."),
-    REACT("react", "Broadcasts a reaction to the voice channel.");
+    REACT("react", "Broadcasts a reaction to the voice channel."),
+    STOP("stop", "Stops broadcasting a track to the voice channel."),
+    PLAY("play", "Broadcasts a track to the voice channel.");
 
     /**
      * Slash command name.

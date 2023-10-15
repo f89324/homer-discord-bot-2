@@ -75,6 +75,7 @@ public class VoiceListener extends ListenerAdapter {
                     log.info("bot left [{}] cause it was alone", event.getChannelLeft().getName());
                     AudioManager manager = event.getGuild().getAudioManager();
                     manager.closeAudioConnection();
+                    player.stopTrack();
                 }
             }
         } else {
