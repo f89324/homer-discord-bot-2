@@ -17,20 +17,9 @@ public class MessageListener extends ListenerAdapter {
         }
 
         if (event.isFromType(ChannelType.PRIVATE)) {
-            log.info("[PM] {}: {}",
-                    event.getAuthor().getName(),
-                    event.getMessage().getContentDisplay());
-
+            log.info("[{}] tried to write a message to the bot.", event.getAuthor().getName());
             event.getAuthor().openPrivateChannel().queue(
-                    channel -> channel.sendMessage("```Nope. The bot works only in the guild.```").queue());
-        } else {
-            log.info("[{}][{}] {}: {}",
-                    event.getGuild().getName(),
-                    event.getChannel().asGuildMessageChannel().getName(),
-                    event.getMember() != null
-                            ? event.getMember().getEffectiveName()
-                            : event.getAuthor().getName(),
-                    event.getMessage().getContentDisplay());
+                    channel -> channel.sendMessage("```Nope. The bot works only in the guild and only with slash commands.```").queue());
         }
     }
 }
