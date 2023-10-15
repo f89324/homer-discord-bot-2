@@ -13,6 +13,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
@@ -69,6 +70,9 @@ public class CommandListener extends ListenerAdapter {
                     break;
                 case ABOUT:
                     about(event);
+                    break;
+                case DELAYED_MESSAGE:
+                    delayedMessage(event);
                     break;
             }
         } catch (Exception e) {
@@ -139,6 +143,24 @@ public class CommandListener extends ListenerAdapter {
             log.info("bot did not react cause it is not in the audio channel");
             event.getHook().editOriginal("```Nope. The bot reacts only when it is in the audio channel.```").queue();
         }
+    }
+
+    private void delayedMessage(@NotNull SlashCommandInteractionEvent event) {
+        // Edit the thinking message with our response on success
+        event.getHook().editOriginal("```I am calling```").queue();// TODO
+
+        Member memberFromOption = event.getOption("member", OptionMapping::getAsMember);
+        String messageFromOption = event.getOption("message", OptionMapping::getAsString);
+
+        //noinspection ConstantConditions // TODO comment
+        if (memberFromOption.getUser().isBot()) {
+            event.getHook().editOriginal("```I am not calling bots```").queue();// TODO
+            return;
+        }
+
+        event.getHook().editOriginal("```I am calling [" + memberFromOption.getNickname() + "]```").queue();// TODO
+
+        // TODO just add to queue of scheduled process
     }
 
     private void about(@NotNull SlashCommandInteractionEvent event) {

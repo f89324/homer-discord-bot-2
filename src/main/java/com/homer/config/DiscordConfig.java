@@ -93,7 +93,14 @@ public class DiscordConfig {
                                         new OptionData(
                                                 OptionType.STRING, "reaction", "Reaction to play", true)
                                                 .addChoices(createChoicesForReaction(reactions)))),
-                createSlashCommand(BotCommand.ABOUT)
+                createSlashCommand(BotCommand.ABOUT),
+                createSlashCommand(BotCommand.DELAYED_MESSAGE)
+                        .addOptions(
+                                List.of(
+                                        new OptionData(
+                                                OptionType.USER, "member", "TODO", true), // TODO
+                                        new OptionData(
+                                                OptionType.STRING, "message", "TODO", true))) // TODO
         );
     }
 

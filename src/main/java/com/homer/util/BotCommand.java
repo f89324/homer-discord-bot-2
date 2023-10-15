@@ -12,6 +12,7 @@ public enum BotCommand {
     JOIN("join", "Join the voice channel you're in."),
     LEAVE("leave", "Leave a voice channel."),
     ABOUT("about", "Show information about the bot."),
+    DELAYED_MESSAGE("delayed_message", "TODO TODO TODO"), // TODO
     REACT("react", "Broadcasts a reaction to the voice channel.");
 
     /**

@@ -24,6 +24,7 @@ java ^
 * `join` - Joins a voice channel.
 * `leave` - Leaves a voice channel.
 * `react` - Broadcasts a reaction to the voice channel.
+* `delayed_message` - Broadcasts a reaction to the voice channel. // TODO
 
 #### Permissions bot need to work
 * `VIEW_CHANNEL` - To read text channels & see voice channels.
