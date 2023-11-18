@@ -1,12 +1,13 @@
 package com.homer.config;
 
+import com.homer.command.Command;
 import com.homer.exception.HomerException;
 import com.homer.listener.CommandListener;
 import com.homer.listener.MessageListener;
 import com.homer.listener.ReadyListener;
 import com.homer.listener.VoiceListener;
+import com.homer.service.CommandsHolder;
 import com.homer.service.TrackScheduler;
-import com.homer.util.BotCommand;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -19,12 +20,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.apache.http.client.config.CookieSpecs;
@@ -35,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -45,11 +39,11 @@ public class DiscordConfig {
     private String discordToken;
 
     @Bean(name = "bot")
-    public JDA bot(@NotNull HomerProperties homerProperties,
-                   @NotNull ReadyListener readyListener,
+    public JDA bot(@NotNull ReadyListener readyListener,
                    @NotNull MessageListener messageListener,
                    @NotNull VoiceListener voiceListener,
-                   @NotNull CommandListener commandListener) {
+                   @NotNull CommandListener commandListener,
+                   @NotNull CommandsHolder commandsHolder) {
         JDA bot = JDABuilder.createDefault(discordToken)
                 .disableCache(CacheFlag.MEMBER_OVERRIDES)
                 // Enable the VOICE_STATE cache to find a user's connected voice channel
@@ -66,8 +60,10 @@ public class DiscordConfig {
                 .build();
 
         // Sets the global command list to the provided commands (removing all others)
-        bot.updateCommands()
-                .addCommands(createCommands(homerProperties.getReactions()))
+        bot.updateCommands().addCommands(
+                        commandsHolder.getCommands().values().stream()
+                                .map(Command::createSlashCommand)
+                                .collect(Collectors.toList()))
                 .queue();
 
         try {
@@ -107,46 +103,5 @@ public class DiscordConfig {
         TrackScheduler trackScheduler = new TrackScheduler(player);
         player.addListener(trackScheduler);
         return trackScheduler;
-    }
-
-    @NotNull
-    private List<SlashCommandData> createCommands(List<HomerProperties.Reaction> reactions) {
-        return List.of(
-                createSlashCommand(BotCommand.JOIN)
-                        .addOptions(
-                                List.of(
-                                        new OptionData(
-                                                OptionType.CHANNEL, "channel", "Channel to join")
-                                                .setChannelTypes(ChannelType.VOICE))),
-                createSlashCommand(BotCommand.LEAVE),
-                createSlashCommand(BotCommand.REACT)
-                        .addOptions(
-                                List.of(
-                                        new OptionData(
-                                                OptionType.STRING, "reaction", "Reaction to play", true)
-                                                .addChoices(createChoicesForReaction(reactions)))),
-                createSlashCommand(BotCommand.PLAY)
-                        .addOptions(
-                                List.of(
-                                        new OptionData(
-                                                OptionType.STRING, "url", "URL to track location", true))),
-                createSlashCommand(BotCommand.STOP),
-                createSlashCommand(BotCommand.ABOUT),
-                createSlashCommand(BotCommand.SKIP)
-        );
-    }
-
-    @NotNull
-    private SlashCommandData createSlashCommand(@NotNull BotCommand command) {
-        return Commands.slash(command.getName(), command.getDescription());
-    }
-
-    @NotNull
-    private List<Command.Choice> createChoicesForReaction(@NotNull List<HomerProperties.Reaction> reactions) {
-        return reactions.stream()
-                .map(r -> new Command.Choice(
-                        "[" + r.getEmoji() + "] " + r.getName(),
-                        r.getName()))
-                .collect(Collectors.toList());
     }
 }
