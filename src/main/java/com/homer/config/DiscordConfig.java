@@ -5,6 +5,7 @@ import com.homer.listener.CommandListener;
 import com.homer.listener.MessageListener;
 import com.homer.listener.ReadyListener;
 import com.homer.listener.VoiceListener;
+import com.homer.service.TrackScheduler;
 import com.homer.util.BotCommand;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -99,6 +100,13 @@ public class DiscordConfig {
     @Bean(name = "audioPlayer")
     public AudioPlayer audioPlayer(AudioPlayerManager audioPlayerManager) {
         return audioPlayerManager.createPlayer();
+    }
+
+    @Bean(name = "trackScheduler")
+    public TrackScheduler trackScheduler(AudioPlayer player) {
+        TrackScheduler trackScheduler = new TrackScheduler(player);
+        player.addListener(trackScheduler);
+        return trackScheduler;
     }
 
     @NotNull

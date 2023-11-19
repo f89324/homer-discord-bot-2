@@ -3,6 +3,7 @@ package com.homer.listener;
 import com.homer.config.HomerProperties;
 import com.homer.exception.HomerException;
 import com.homer.service.AudioPlayerSendHandler;
+import com.homer.service.TrackScheduler;
 import com.homer.util.BotCommand;
 import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 public class CommandListener extends ListenerAdapter {
 
     private final AudioPlayer player;
+    private final TrackScheduler trackScheduler;
     private final HomerProperties homerProperties;
     private final AudioPlayerManager audioPlayerManager;
 
@@ -207,8 +209,7 @@ public class CommandListener extends ListenerAdapter {
                 player.stopTrack();
 
                 for (AudioTrack track : playlist.getTracks()) {
-                    log.info("Play track [{}]", track);
-                    player.playTrack(track);
+                    trackScheduler.queue(track);
                 }
             }
 
