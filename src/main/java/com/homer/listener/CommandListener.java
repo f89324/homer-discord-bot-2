@@ -83,6 +83,9 @@ public class CommandListener extends ListenerAdapter {
                 case STOP:
                     stop(event);
                     break;
+                case SKIP:
+                    skip(event);
+                    break;
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -184,6 +187,20 @@ public class CommandListener extends ListenerAdapter {
                     .queue();
         } else {
             event.getHook().editOriginal("```There's nothing to stop.```")
+                    .queue();
+        }
+    }
+
+    private void skip(@NotNull SlashCommandInteractionEvent event) {
+        if (player.getPlayingTrack() != null) {
+            log.info("[{}] skip track [{}]", event.getUser().getName(), player.getPlayingTrack().getInfo().title);
+            trackScheduler.nextTrack();
+
+            event.getHook().editOriginal("```Skipped to next track.```")
+                    .queue();
+        } else {
+            log.info("[{}] skip track, but there's nothing to skip.", event.getUser().getName());
+            event.getHook().editOriginal("```Skipped to next track, but there's nothing to skip.```")
                     .queue();
         }
     }

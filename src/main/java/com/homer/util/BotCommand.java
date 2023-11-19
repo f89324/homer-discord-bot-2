@@ -14,6 +14,7 @@ public enum BotCommand {
     ABOUT("about", "Show information about the bot."),
     REACT("react", "Broadcasts a reaction to the voice channel."),
     STOP("stop", "Stops broadcasting a track to the voice channel."),
+    SKIP("skip", "Skips current track and plays the next one."),
     PLAY("play", "Broadcasts a track to the voice channel.");
 
     /**

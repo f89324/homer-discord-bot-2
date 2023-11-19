@@ -10,7 +10,7 @@ Exclusive bot for Donut Hole server.
 chcp 65001
 java ^
 -Dspring.config.location=homer-config.yml ^
--jar untitled-0.0.1.jar
+-jar homer-discord-bot-0.0.1.jar
 ```
 
 ### Usage
@@ -26,6 +26,7 @@ java ^
 * `react` - Broadcasts a reaction to the voice channel.
 * `play` - Broadcasts a track to the voice channel.
 * `stop` - Stops broadcasting a track to the voice channel.
+* `skip` - Skips current track and plays the next one.
 
 #### Permissions bot need to work
 * `VIEW_CHANNEL` - To read text channels & see voice channels.

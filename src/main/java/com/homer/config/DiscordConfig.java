@@ -131,7 +131,8 @@ public class DiscordConfig {
                                         new OptionData(
                                                 OptionType.STRING, "url", "URL to track location", true))),
                 createSlashCommand(BotCommand.STOP),
-                createSlashCommand(BotCommand.ABOUT)
+                createSlashCommand(BotCommand.ABOUT),
+                createSlashCommand(BotCommand.SKIP)
         );
     }
 
