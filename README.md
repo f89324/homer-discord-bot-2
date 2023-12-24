@@ -27,6 +27,7 @@ java ^
 * `play` - Broadcasts a track to the voice channel.
 * `stop` - Stops broadcasting a track to the voice channel.
 * `skip` - Skips current track and plays the next one.
+* `play-next` - Adds a track to the current playlist.
 
 #### Permissions bot need to work
 * `VIEW_CHANNEL` - To read text channels & see voice channels.
