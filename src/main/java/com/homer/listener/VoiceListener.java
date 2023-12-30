@@ -2,6 +2,7 @@ package com.homer.listener;
 
 import com.homer.config.HomerProperties;
 import com.homer.service.AudioPlayerSendHandler;
+import com.homer.service.TrackScheduler;
 import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -26,12 +27,14 @@ import java.util.stream.Collectors;
 public class VoiceListener extends ListenerAdapter {
 
     private final AudioPlayer player;
+    private final TrackScheduler trackScheduler;
     private final HomerProperties homerProperties;
     private final Map<String, String> intros;
 
     @Autowired
-    public VoiceListener(AudioPlayer player, HomerProperties homerProperties) {
+    public VoiceListener(AudioPlayer player, TrackScheduler trackScheduler, HomerProperties homerProperties) {
         this.player = player;
+        this.trackScheduler = trackScheduler;
         this.homerProperties = homerProperties;
         this.intros = getIntroAsMap();
     }
@@ -101,8 +104,7 @@ public class VoiceListener extends ListenerAdapter {
             AudioTrackInfo trackInfo = new AudioTrackInfo(introFilename, "", 0, "", false, "");
             AudioTrack track = new Mp3AudioTrack(trackInfo, new NonSeekableInputStream(audioStream));
 
-            player.stopTrack();
-            player.playTrack(track);
+            trackScheduler.playPriorityTrack(track);
         } else {
             log.info("there is no intro for member [{}]", userName);
         }

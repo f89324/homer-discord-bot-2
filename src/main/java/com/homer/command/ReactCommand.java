@@ -3,9 +3,9 @@ package com.homer.command;
 import com.homer.config.HomerProperties;
 import com.homer.exception.HomerException;
 import com.homer.service.CommandsHolder;
+import com.homer.service.TrackScheduler;
 import com.homer.util.HomerUtil;
 import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.io.NonSeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
@@ -28,13 +28,13 @@ import java.util.stream.Collectors;
 @Component
 public class ReactCommand extends Command {
 
-    private final AudioPlayer player;
     private final HomerProperties homerProperties;
+    private final TrackScheduler trackScheduler;
 
-    public ReactCommand(CommandsHolder commandsHolder, AudioPlayer player, HomerProperties homerProperties) {
+    public ReactCommand(CommandsHolder commandsHolder, HomerProperties homerProperties, TrackScheduler trackScheduler) {
         super(commandsHolder, "react", "Broadcasts a reaction to the voice channel.");
-        this.player = player;
         this.homerProperties = homerProperties;
+        this.trackScheduler = trackScheduler;
     }
 
     public void execute(@NotNull SlashCommandInteractionEvent event) {
@@ -54,8 +54,8 @@ public class ReactCommand extends Command {
             AudioTrackInfo trackInfo = new AudioTrackInfo("REACTION " + reaction.getName(), "", 0, "", false, "");
             AudioTrack track = new Mp3AudioTrack(trackInfo, new NonSeekableInputStream(audioStream));
 
-            player.stopTrack();
-            player.playTrack(track);
+            trackScheduler.playPriorityTrack(track);
+
             log.info("the bot reacted with [{}] reaction to the audio channel [{}].", reaction.getName(), botVoiceState.getChannel().getName());
         } else {
             log.info("bot did not react cause it is not in the audio channel");
