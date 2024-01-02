@@ -30,6 +30,7 @@ java ^
 * `play-next` - Adds a track to the current playlist.
 * `pause` - Pauses track playback.
 * `resume` - Resumes track playback.
+* `now-playing` - Shows what is currently playing.
 
 #### Permissions bot need to work
 * `VIEW_CHANNEL` - To read text channels & see voice channels.

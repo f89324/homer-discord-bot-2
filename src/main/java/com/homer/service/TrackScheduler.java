@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -50,6 +51,11 @@ public class TrackScheduler extends AudioEventAdapter {
             return;
         }
         log.info("Play track [{}]", track.getInfo().title);
+    }
+
+    @NotNull
+    public LinkedList<AudioTrack> getPlaylist() {
+        return new LinkedList<>(queue);
     }
 
     /**
