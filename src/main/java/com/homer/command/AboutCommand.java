@@ -20,7 +20,7 @@ public class AboutCommand extends Command {
     private final HomerProperties homerProperties;
 
     public AboutCommand(CommandsHolder commandsHolder, HomerProperties homerProperties) {
-        super(commandsHolder, "about", "Show information about the bot.");
+        super(commandsHolder, "about", "Shows information about the bot.");
         this.homerProperties = homerProperties;
     }
 

@@ -20,10 +20,11 @@ java ^
 * The bot will automatically disconnect from the audio channel if the last person left.
 * The bot will play personal intro music when specific people enter an active audio channel.
 
-#### Basic commands
+#### Commands
 * `join` - Joins a voice channel.
 * `leave` - Leaves a voice channel.
 * `react` - Broadcasts a reaction to the voice channel.
+* `about` - Shows information about the bot.
 * `play` - Broadcasts a track to the voice channel.
 * `stop` - Stops broadcasting a track to the voice channel.
 * `skip` - Skips current track and plays the next one.

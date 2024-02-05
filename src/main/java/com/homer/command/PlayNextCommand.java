@@ -48,7 +48,7 @@ public class PlayNextCommand extends Command {
                 trackScheduler.queue(track, errorHandler);
                 log.info("Track [{}] added to playlist", track.getInfo().title);
 
-                event.getHook().editOriginal("```Track [{}] [" + track.getInfo().title + " — " + track.getInfo().author + "] added to playlist```")
+                event.getHook().editOriginal("```Track [" + track.getInfo().title + " — " + track.getInfo().author + "] added to playlist```")
                         .queue();
             }
 
