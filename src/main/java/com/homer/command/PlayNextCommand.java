@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -42,7 +43,9 @@ public class PlayNextCommand extends Command {
         return new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                trackScheduler.queue(track);
+                Consumer<String> errorHandler = (errorMessage) -> event.getChannel().sendMessage("```" + errorMessage + "```").queue();
+
+                trackScheduler.queue(track, errorHandler);
                 log.info("Track [{}] added to playlist", track.getInfo().title);
 
                 event.getHook().editOriginal("```Track [{}] [" + track.getInfo().title + " — " + track.getInfo().author + "] added to playlist```")
@@ -52,7 +55,9 @@ public class PlayNextCommand extends Command {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 for (AudioTrack track : playlist.getTracks()) {
-                    trackScheduler.queue(track);
+                    Consumer<String> errorHandler = (errorMessage) -> event.getChannel().sendMessage("```" + errorMessage + "```").queue();
+
+                    trackScheduler.queue(track, errorHandler);
                     log.info("Track [{}] added to playlist", track.getInfo().title);
                 }
 
